@@ -22,14 +22,14 @@ Execute the toolchain installation script:
 ```bash
 ./qcom-wayland-x86_64-qcom-multimedia-image-armv8-2a-qcs6490-openq-toolchain-extv1.2.sh
 ```
-Note: You will be prompted to select an installation location on your host PC. The default path is ~/qcom-wayland_sdk, but you can customize this (e.g., /opt/qcom-wayland_sdk) depending on your environment preferences.
+Note: You will be prompted to select an installation location on your host PC. The default path is ~/qcom-wayland_sdk, but you can customize this depending on your environment preferences.
 
 ### 3. Source the eSDK Environment
 Each time you wish to use the eSDK in a new shell session, you must to source the environment setup script to initialize the eSDK environment variables:
 ```bash
-$ . <path to qcom-wayland_sdk>/environment-setup-armv8-2a-qcom-linux
+$ . <path to installed eSDK>/environment-setup-armv8-2a-qcom-linux
 or
-$ cd <path to qcom-wayland_sdk>
+$ cd <path to installed eSDK>
 $ source environment-setup-armv8-2a-qcom-linux
 ```
 Verify that your terminal prompt changes or check that bitbake and devtool are now available in your $PATH.
@@ -46,8 +46,8 @@ Run the following command to create a new recipe named `ns-4test` pointing to th
 devtool add ns-4test [https://github.com/ninasla/ns-script-4test.git](https://github.com/ninasla/ns-script-4test.git)
 ```
 This command automatically generates two key paths inside your eSDK directory structure:
-- Recipe Template: ~/qcom-wayland_sdk/workspace/recipes/ns-4test/ns-4test_git.bb
-- Source Workspace: ~/qcom-wayland_sdk/workspace/sources/ns-4test/
+- Recipe Template: <path to installed eSDK>/workspace/recipes/ns-4test/ns-4test_git.bb
+- Source Workspace: <path to installed eSDK>/workspace/sources/ns-4test/
 
 ### 2. Configure the Recipe for Script Installation
 Open the generated recipe file (ns-4test_git.bb) in your preferred text editor and append the following do_install block to instruct Yocto to install the script into the target's standard binary directory:
@@ -71,15 +71,34 @@ Use devtool to deploy the compiled binary directly over the network to your runn
 ```bash
 devtool deploy-target ns-4test root@<target-device-IP>
 ```
-### 2. Generate the Final Package Archetype
+
+### 2. Run the Test Script
+Access your device via an ADB shell or SSH connection and execute the script:
+```bash
+# which ns-4test
+/usr/bin/ns-4test
+
+# ns-4test
+```
+Expected Output:
+The script will execute and output system-specific details directly to the console:
+```bash
+--- Device Software Version ---devtool deploy-target ns-4test root@<target-device-IP>
+[Version Info Output]
+
+--- Kernel Command Line ---
+[Kernel Boot Arguments Output]
+```
+
+### 3. Generate the Final IPK Package
 Once verified on the target, generate the final package files:
 ```bash
 devtool package ns-4test
 ```
-### 3. Run the Test Script
-Access your device via an ADB shell or SSH connection and execute the script:
-Once verified on the target, generate the final package files:
+This command generates a deployable standard Yocto .ipk package inside the eSDK build directory <path to installed eSDK>/tmp/deploy/ipk
+
+**IPK** package could be transfered to target device over network using `adb push` or `scp` and installed using [Qualcomm Linux Native Package Manager (opkg)]
+Qualcomm Linux includes opkg as its default, lightweight package manager on the target image. This allows you to install, update, and manage 'ipk packages directly on the live device without rebuilding the entire system image.
 ```bash
-# From the target device shell
-sh-5.1# /usr/bin/ns-4test
+# opkg install /tmp/ns-4test_*.ipk
 ```
