@@ -63,3 +63,23 @@ Compile and package the recipe locally to verify there are no syntax or path iss
 ```bash
 devtool build ns-4test
 ```
+## 🚀 Step 3: Deploy and Test on the OpenQ 6490 Target
+You can live-test the package directly on your hardware without reflashing the entire system image.
+
+### 1. Push to the Device
+Use devtool to deploy the compiled binary directly over the network to your running target board:
+```bash
+devtool deploy-target ns-4test root@<target-device-IP>
+```
+### 2. Generate the Final Package Archetype
+Once verified on the target, generate the final package files:
+```bash
+devtool package ns-4test
+```
+### 3. Run the Test Script
+Access your device via an ADB shell or SSH connection and execute the script:
+Once verified on the target, generate the final package files:
+```bash
+# From the target device shell
+sh-5.1# /usr/bin/ns-4test
+```
