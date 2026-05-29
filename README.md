@@ -36,3 +36,30 @@ Verify that your terminal prompt changes or check that bitbake and devtool are n
 ```bash
 $ devtool --help
 ```
+## 📦 Step 2: Add and Build the Package with devtool
+
+With the eSDK environment active, you can use `devtool` to automatically fetch this repository, create a recipe skeleton, and build it.
+
+### 1. Add the Sample Package
+Run the following command to create a new recipe named `ns-4test` pointing to this remote repository:
+```bash
+devtool add ns-4test [https://github.com/ninasla/ns-script-4test.git](https://github.com/ninasla/ns-script-4test.git)
+```
+This command automatically generates two key paths inside your eSDK directory structure:
+- Recipe Template: ~/qcom-wayland_sdk/workspace/recipes/ns-4test/ns-4test_git.bb
+- Source Workspace: ~/qcom-wayland_sdk/workspace/sources/ns-4test/
+
+### 2. Configure the Recipe for Script Installation
+Open the generated recipe file (ns-4test_git.bb) in your preferred text editor and append the following do_install block to instruct Yocto to install the script into the target's standard binary directory:
+```bash
+do_install () {
+    # Specify install commands here
+    install -d ${D}${bindir}
+    install -m 0755 ${S}/ascript.sh ${D}${bindir}/ns-4test
+}
+```
+### 3. Build the Package
+Compile and package the recipe locally to verify there are no syntax or path issues:
+```bash
+devtool build ns-4test
+```
