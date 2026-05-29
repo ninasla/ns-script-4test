@@ -97,8 +97,22 @@ devtool package ns-4test
 ```
 This command generates a deployable standard Yocto .ipk package inside the eSDK build directory <path to installed eSDK>/tmp/deploy/ipk
 
-**IPK** package could be transfered to target device over network using `adb push` or `scp` and installed using [Qualcomm Linux Native Package Manager (opkg)]
+**IPK** package could be transfered to target device over network using `adb push` or `scp` and installed using **Qualcomm Linux Native Package Manager (opkg)**
 Qualcomm Linux includes opkg as its default, lightweight package manager on the target image. This allows you to install, update, and manage 'ipk packages directly on the live device without rebuilding the entire system image.
 ```bash
 # opkg install /tmp/ns-4test_*.ipk
 ```
+## 🛠️ Step 4: Build the Final System Image in eSDK
+
+Once you have verified that the package behaves as expected, you can bake it permanently into a clean system image using `devtool`.
+
+Run the following command to automatically include your workspace's custom packages (including `ns-4test`) into the standard Qualcomm multimedia image:
+```bash
+devtool build-image qcom-multimedia-image
+```
+After a successful build, the resulting rootfs images, kernel components, and flashable binaries will be generated inside the eSDK deployment workspace:
+`<path to installed eSDK>/tmp/deploy/images/qcs6490-openq/qcom-multimedia-image`
+
+Flashing guide and further details related to OpenQ devkits could be found in documents provided with Lantronix BSP releases: https://www.lantronix.com/
+
+
